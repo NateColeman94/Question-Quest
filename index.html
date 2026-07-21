@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A Socratic homework helper that responds only with questions." />
+  <title>QuestionQuest | Homework Help Through Questions</title>
+  <style>
+    :root {
+      --bg: #f5f3ff;
+      --panel: rgba(255,255,255,.86);
+      --text: #24203a;
+      --muted: #6c6682;
+      --primary: #6d5dfc;
+      --primary-dark: #5142d8;
+      --accent: #ffb84d;
+      --border: #ddd8f6;
+      --success: #2d9d78;
+      --shadow: 0 18px 50px rgba(66, 48, 126, .14);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(255,184,77,.22), transparent 25rem),
+        radial-gradient(circle at 90% 18%, rgba(109,93,252,.18), transparent 28rem),
+        linear-gradient(145deg, #fbfaff 0%, var(--bg) 100%);
+    }
+
+    button, input, textarea, select { font: inherit; }
+
+    .page {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 30px 0 50px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 25px;
+      background: linear-gradient(135deg, var(--primary), #9d6bff);
+      box-shadow: 0 10px 25px rgba(109,93,252,.3);
+    }
+
+    h1 {
+      font-size: clamp(1.2rem, 3vw, 1.65rem);
+      margin: 0;
+    }
+
+    .tagline {
+      color: var(--muted);
+      margin: 2px 0 0;
+      font-size: .93rem;
+    }
+
+    .badge {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.8);
+      padding: 9px 13px;
+      border-radius: 999px;
+      font-size: .84rem;
+      color: var(--primary-dark);
+      font-weight: 700;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid rgba(221,216,246,.9);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    aside {
+      padding: 22px;
+      position: sticky;
+      top: 18px;
+    }
+
+    aside h2 {
+      margin: 0 0 16px;
+      font-size: 1rem;
+    }
+
+    label {
+      display: block;
+      font-size: .84rem;
+      font-weight: 750;
+      margin: 14px 0 7px;
+    }
+
+    select, textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--text);
+      background: #fff;
+      outline: none;
+      transition: .2s ease;
+    }
+
+    select {
+      padding: 11px 12px;
+    }
+
+    textarea {
+      min-height: 116px;
+      resize: vertical;
+      padding: 14px;
+      line-height: 1.5;
+    }
+
+    select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(109,93,252,.12);
+    }
+
+    .rule-card {
+      margin-top: 18px;
+      padding: 15px;
+      border-radius: 16px;
+      background: #f2efff;
+      border: 1px solid #ddd6ff;
+      font-size: .9rem;
+      line-height: 1.45;
+    }
+
+    .rule-card strong { color: var(--primary-dark); }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 16px;
+    }
+
+    .stat {
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: white;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 1.25rem;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: .75rem;
+    }
+
+    main {
+      min-height: 690px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .hero {
+      padding: 30px 30px 22px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(120deg, rgba(109,93,252,.09), rgba(255,184,77,.1));
+    }
+
+    .hero h2 {
+      margin: 0;
+      font-size: clamp(1.5rem, 4vw, 2.35rem);
+      line-height: 1.08;
+      max-width: 720px;
+    }
+
+    .hero p {
+      margin: 12px 0 0;
+      color: var(--muted);
+      max-width: 720px;
+      line-height: 1.55;
+    }
+
+    .chat {
+      flex: 1;
+      padding: 24px 30px 10px;
+      overflow-y: auto;
+      max-height: 470px;
+      min-height: 400px;
+    }
+
+    .message {
+      max-width: 82%;
+      border-radius: 18px;
+      padding: 13px 16px;
+      margin-bottom: 14px;
+      line-height: 1.5;
+      animation: rise .22s ease;
+      white-space: pre-wrap;
+    }
+
+    @keyframes rise {
+      from { transform: translateY(7px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .assistant {
+      background: #f0edff;
+      border: 1px solid #ded8ff;
+      border-bottom-left-radius: 6px;
+    }
+
+    .user {
+      margin-left: auto;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), #806cfb);
+      border-bottom-right-radius: 6px;
+    }
+
+    .composer {
+      padding: 20px 30px 28px;
+      border-top: 1px solid var(--border);
+      background: rgba(255,255,255,.65);
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 11px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      border-radius: 13px;
+      padding: 11px 16px;
+      font-weight: 800;
+      transition: transform .15s ease, opacity .15s ease, box-shadow .15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .primary {
+      color: white;
+      background: linear-gradient(135deg, var(--primary), #8b72ff);
+      box-shadow: 0 9px 20px rgba(109,93,252,.22);
+    }
+
+    .secondary {
+      background: white;
+      color: var(--primary-dark);
+      border: 1px solid var(--border);
+    }
+
+    .danger {
+      margin-top: 12px;
+      width: 100%;
+      background: #fff;
+      color: #8c4764;
+      border: 1px solid #f0cddd;
+    }
+
+    .suggestions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .chip {
+      padding: 8px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--muted);
+      font-size: .8rem;
+      font-weight: 700;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      text-align: center;
+      font-size: .78rem;
+      padding-top: 18px;
+    }
+
+    @media (max-width: 780px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { position: static; }
+      header { align-items: flex-start; }
+      .badge { display: none; }
+      .chat { max-height: none; }
+      .message { max-width: 94%; }
+      .hero, .chat, .composer { padding-left: 20px; padding-right: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="brand">
+        <div class="logo">?</div>
+        <div>
+          <h1>QuestionQuest</h1>
+          <p class="tagline">Homework help that makes you think</p>
+        </div>
+      </div>
+      <div class="badge">Socratic Mode: Always On</div>
+    </header>
+
+    <div class="layout">
+      <aside class="panel">
+        <h2>Learning setup</h2>
+
+        <label for="subject">Subject</label>
+        <select id="subject">
+          <option value="auto">Detect automatically</option>
+          <option value="math">Math</option>
+          <option value="science">Science</option>
+          <option value="history">History</option>
+          <option value="english">English / Writing</option>
+          <option value="business">Business</option>
+          <option value="general">General</option>
+        </select>
+
+        <label for="level">Question style</label>
+        <select id="level">
+          <option value="gentle">Gentle guidance</option>
+          <option value="standard" selected>Balanced guidance</option>
+          <option value="challenge">Challenge me</option>
+        </select>
+
+        <div class="rule-card">
+          <strong>The one rule:</strong><br>
+          QuestionQuest never gives a direct answer. Every response must help you move forward by asking a question.
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <b id="questionCount">0</b>
+            <span>questions asked</span>
+          </div>
+          <div class="stat">
+            <b id="streakCount">0</b>
+            <span>step streak</span>
+          </div>
+        </div>
+
+        <button class="danger" id="clearBtn">Clear conversation</button>
+      </aside>
+
+      <main class="panel">
+        <section class="hero">
+          <h2>What are you working on?</h2>
+          <p>Share a homework problem, draft idea, or confusing concept, and the app will guide you with questions instead of doing the work for you.</p>
+          <div class="suggestions">
+            <button class="chip" data-example="Solve 3x + 7 = 22">Math equation</button>
+            <button class="chip" data-example="Why do seasons change?">Science concept</button>
+            <button class="chip" data-example="Help me analyze the theme in The Great Gatsby">Literary analysis</button>
+          </div>
+        </section>
+
+        <section class="chat" id="chat" aria-live="polite">
+          <div class="message assistant">What homework question would you like to explore?</div>
+        </section>
+
+        <section class="composer">
+          <textarea id="input" placeholder="Type your homework question here..." aria-label="Homework question"></textarea>
+          <div class="button-row">
+            <button class="primary" id="askBtn">Ask QuestionQuest</button>
+            <button class="secondary" id="nextBtn">Ask another guiding question</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="footer-note">Designed to support learning, not replace it.</div>
+  </div>
+
+  <script>
+    const chat = document.getElementById("chat");
+    const input = document.getElementById("input");
+    const subjectSelect = document.getElementById("subject");
+    const levelSelect = document.getElementById("level");
+    const questionCountEl = document.getElementById("questionCount");
+    const streakCountEl = document.getElementById("streakCount");
+
+    let lastUserText = "";
+    let questionCount = Number(localStorage.getItem("qq_questionCount") || 0);
+    let streakCount = Number(localStorage.getItem("qq_streakCount") || 0);
+    let step = 0;
+
+    updateStats();
+
+    function updateStats() {
+      questionCountEl.textContent = questionCount;
+      streakCountEl.textContent = streakCount;
+      localStorage.setItem("qq_questionCount", questionCount);
+      localStorage.setItem("qq_streakCount", streakCount);
+    }
+
+    function addMessage(text, role) {
+      const el = document.createElement("div");
+      el.className = `message ${role}`;
+      el.textContent = text;
+      chat.appendChild(el);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function detectSubject(text) {
+      const t = text.toLowerCase();
+      if (/[0-9][x²^+\-*/=]|equation|fraction|percent|calculate|geometry|algebra|mean|median|probability/.test(t)) return "math";
+      if (/cell|atom|force|energy|ecosystem|planet|chemical|biology|physics|science|experiment|weather|season/.test(t)) return "science";
+      if (/war|president|revolution|history|century|empire|government|civilization|historical/.test(t)) return "history";
+      if (/essay|theme|character|novel|poem|grammar|thesis|paragraph|author|writing|symbolism/.test(t)) return "english";
+      if (/business|inventory|supply chain|marketing|finance|roi|strategy|company|customer/.test(t)) return "business";
+      return "general";
+    }
+
+    function ensureQuestion(text) {
+      let cleaned = text.trim().replace(/[.!]+$/g, "");
+      return cleaned.endsWith("?") ? cleaned : cleaned + "?";
+    }
+
+    function extractNumbers(text) {
+      return text.match(/-?\d+(\.\d+)?/g) || [];
+    }
+
+    function mathQuestion(text, level, currentStep) {
+      const nums = extractNumbers(text);
+      const hasEquation = text.includes("=");
+      const sets = {
+        gentle: [
+          hasEquation ? "What operation could undo the number being added or subtracted first?" : "What information is the problem giving you?",
+          "Which quantity are you trying to find?",
+          nums.length >= 2 ? `How might the numbers ${nums.slice(0,3).join(", ")} be related?` : "Could you represent the problem with numbers, a table, or an equation?",
+          "What is one small calculation you can confidently do first?",
+          "How could you check whether your result makes sense?"
+        ],
+        standard: [
+          hasEquation ? "What inverse operation would isolate the variable one step at a time?" : "What mathematical relationship does the problem describe?",
+          "Which values are known, and which value is unknown?",
+          "What formula, rule, or model seems most relevant here?",
+          "What would the next valid step be, and why?",
+          "How can you verify the result using substitution or estimation?"
+        ],
+        challenge: [
+          "What assumptions are hidden in the way this problem is written?",
+          "Can you solve it using a different representation or method?",
+          "Which step would be easiest to justify to someone who disagrees?",
+          "What common mistake might produce a believable but incorrect result?",
+          "How would the answer change if one given value changed?"
+        ]
+      };
+      return sets[level][currentStep % sets[level].length];
+    }
+
+    function scienceQuestion(text, level, currentStep) {
+      const sets = {
+        gentle: [
+          "What objects, organisms, or forces are involved?",
+          "What change or outcome are you trying to explain?",
+          "What do you already know about the process?",
+          "What cause-and-effect relationship might connect the details?",
+          "What observation or experiment could test your idea?"
+        ],
+        standard: [
+          "Which scientific principle appears most relevant to this situation?",
+          "What is the independent variable, and what outcome would you observe?",
+          "What mechanism could explain why this happens?",
+          "What evidence would support or weaken that explanation?",
+          "How could you distinguish correlation from causation here?"
+        ],
+        challenge: [
+          "What alternative explanation could fit the same observations?",
+          "Which assumption would matter most if it were wrong?",
+          "What prediction does your explanation make?",
+          "What result would falsify your explanation?",
+          "At what scale does this explanation stop working well?"
+        ]
+      };
+      return sets[level][currentStep % sets[level].length];
+    }
+
+    function historyQuestion(text, level, currentStep) {
+      const sets = {
+        gentle: [
+          "Who were the main people or groups involved?",
+          "What happened before this event?",
+          "What problem or conflict were people responding to?",
+          "What changed because of the event?",
+          "Whose perspective might tell the story differently?"
+        ],
+        standard: [
+          "Which political, economic, or social cause seems most important?",
+          "What primary evidence could support your interpretation?",
+          "How did the event affect different groups in different ways?",
+          "Was this event more of a turning point or a continuation?",
+          "What consequence lasted the longest?"
+        ],
+        challenge: [
+          "Which popular interpretation deserves to be questioned?",
+          "How might the outcome have changed under a different condition?",
+          "Which source would be most vulnerable to bias?",
+          "What is the strongest counterargument to your interpretation?",
+          "How would historians from two different schools of thought disagree?"
+        ]
+      };
+      return sets[level][currentStep % sets[level].length];
+    }
+
+    function englishQuestion(text, level, currentStep) {
+      const sets = {
+        gentle: [
+          "What is the text mainly trying to communicate?",
+          "Which character, image, or detail stands out most?",
+          "What feeling or idea does that detail create?",
+          "Which quotation could support your interpretation?",
+          "How could you explain why that evidence matters?"
+        ],
+        standard: [
+          "What claim do you want your reader to accept?",
+          "Which specific evidence best supports that claim?",
+          "What pattern, contrast, or symbol appears in the text?",
+          "How does the author's choice shape the reader's understanding?",
+          "What counterinterpretation should your analysis address?"
+        ],
+        challenge: [
+          "What tension or contradiction makes the text interesting?",
+          "How might a different critical lens change your interpretation?",
+          "Which word choice carries more meaning than it first appears to?",
+          "Where is your argument most vulnerable?",
+          "What deeper implication follows from your evidence?"
+        ]
+      };
+      return sets[level][currentStep % sets[level].length];
+    }
+
+    function businessQuestion(text, level, currentStep) {
+      const sets = {
+        gentle: [
+          "What business problem is the organization trying to solve?",
+          "Who is affected by the decision?",
+          "What information is already available?",
+          "Which outcome would count as success?",
+          "What tradeoff must the decision maker manage?"
+        ],
+        standard: [
+          "Which metric best represents the real business objective?",
+          "What baseline should the proposed solution be compared against?",
+          "Which assumption has the greatest effect on the recommendation?",
+          "What cost, risk, or operational constraint could change the decision?",
+          "How would you test the recommendation on a small scale?"
+        ],
+        challenge: [
+          "What incentive might cause the chosen metric to be gamed?",
+          "Which stakeholder would disagree with the recommendation, and why?",
+          "What second-order consequence could appear after implementation?",
+          "What evidence would make you reverse your decision?",
+          "How could a competitor respond?"
+        ]
+      };
+      return sets[level][currentStep % sets[level].length];
+    }
+
+    function generalQuestion(text, level, currentStep) {
+      const sets = {
+        gentle: [
+          "What part of the question feels most confusing?",
+          "What do you already know about the topic?",
+          "What is the question asking you to produce?",
+          "Can you break the task into one smaller step?",
+          "What example could help you test your understanding?"
+        ],
+        standard: [
+          "What is the central problem in your own words?",
+          "Which details are essential, and which are distractions?",
+          "What rule, concept, or source could guide your next step?",
+          "What tentative answer do you currently believe?",
+          "What evidence would help you check that idea?"
+        ],
+        challenge: [
+          "What assumption are you making without noticing?",
+          "What is the strongest alternative explanation?",
+          "How could you approach the problem from the opposite direction?",
+          "What would an expert ask before answering?",
+          "How would you defend your reasoning under criticism?"
+        ]
+      };
+      return sets[level][currentStep % sets[level].length];
+    }
+
+    function makeGuidingQuestion(text) {
+      const selected = subjectSelect.value;
+      const subject = selected === "auto" ? detectSubject(text) : selected;
+      const level = levelSelect.value;
+      const currentStep = step++;
+
+      const generators = {
+        math: mathQuestion,
+        science: scienceQuestion,
+        history: historyQuestion,
+        english: englishQuestion,
+        business: businessQuestion,
+        general: generalQuestion
+      };
+
+      return ensureQuestion(generators[subject](text, level, currentStep));
+    }
+
+    function submitQuestion() {
+      const text = input.value.trim();
+      if (!text) {
+        addMessage("What question would you like help thinking through?", "assistant");
+        return;
+      }
+
+      lastUserText = text;
+      addMessage(text, "user");
+      input.value = "";
+
+      questionCount++;
+      streakCount++;
+      updateStats();
+
+      window.setTimeout(() => {
+        addMessage(makeGuidingQuestion(text), "assistant");
+      }, 250);
+    }
+
+    document.getElementById("askBtn").addEventListener("click", submitQuestion);
+
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      if (!lastUserText) {
+        addMessage("What homework problem should we begin with?", "assistant");
+        return;
+      }
+      streakCount++;
+      updateStats();
+      addMessage(makeGuidingQuestion(lastUserText), "assistant");
+    });
+
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      chat.innerHTML = '<div class="message assistant">What homework question would you like to explore?</div>';
+      lastUserText = "";
+      step = 0;
+      streakCount = 0;
+      updateStats();
+    });
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        submitQuestion();
+      }
+    });
+
+    document.querySelectorAll("[data-example]").forEach(button => {
+      button.addEventListener("click", () => {
+        input.value = button.dataset.example;
+        input.focus();
+      });
+    });
+  </script>
+</body>
+</html>
