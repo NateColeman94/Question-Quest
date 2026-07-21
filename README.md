@@ -1,4 +1,4 @@
-# QuestionQuest
+ # QuestionQuest
 
 QuestionQuest is a lightweight Socratic homework helper that responds only with guiding questions.
 
