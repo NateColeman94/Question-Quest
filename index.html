@@ -3,20 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="A Socratic homework helper that responds only with questions." />
-  <title>QuestionQuest | Homework Help Through Questions</title>
+  <meta name="description" content="An adaptive Socratic homework tutor that guides students one question at a time." />
+  <title>QuestionQuest Tutor</title>
   <style>
     :root {
-      --bg: #f5f3ff;
-      --panel: rgba(255,255,255,.86);
-      --text: #24203a;
-      --muted: #6c6682;
+      --bg: #f6f4ff;
+      --panel: rgba(255,255,255,.92);
+      --text: #28243f;
+      --muted: #716b86;
       --primary: #6d5dfc;
       --primary-dark: #5142d8;
+      --primary-soft: #efecff;
       --accent: #ffb84d;
-      --border: #ddd8f6;
-      --success: #2d9d78;
-      --shadow: 0 18px 50px rgba(66, 48, 126, .14);
+      --success: #2f9a70;
+      --danger: #bf5572;
+      --border: #ded9f4;
+      --shadow: 0 18px 50px rgba(70, 52, 130, .14);
     }
 
     * { box-sizing: border-box; }
@@ -27,17 +29,17 @@
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at 12% 8%, rgba(255,184,77,.22), transparent 25rem),
-        radial-gradient(circle at 90% 18%, rgba(109,93,252,.18), transparent 28rem),
+        radial-gradient(circle at 10% 10%, rgba(255,184,77,.2), transparent 24rem),
+        radial-gradient(circle at 92% 16%, rgba(109,93,252,.18), transparent 30rem),
         linear-gradient(145deg, #fbfaff 0%, var(--bg) 100%);
     }
 
     button, input, textarea, select { font: inherit; }
 
     .page {
-      width: min(1120px, calc(100% - 32px));
+      width: min(1180px, calc(100% - 28px));
       margin: 0 auto;
-      padding: 30px 0 50px;
+      padding: 26px 0 44px;
     }
 
     header {
@@ -45,7 +47,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 20px;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
     }
 
     .brand {
@@ -55,48 +57,41 @@
     }
 
     .logo {
-      width: 48px;
-      height: 48px;
+      width: 50px;
+      height: 50px;
       border-radius: 16px;
       display: grid;
       place-items: center;
       color: white;
-      font-size: 25px;
-      background: linear-gradient(135deg, var(--primary), #9d6bff);
+      font-size: 26px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--primary), #9b70ff);
       box-shadow: 0 10px 25px rgba(109,93,252,.3);
     }
 
-    h1 {
-      font-size: clamp(1.2rem, 3vw, 1.65rem);
-      margin: 0;
-    }
-
-    .tagline {
-      color: var(--muted);
-      margin: 2px 0 0;
-      font-size: .93rem;
-    }
+    h1 { margin: 0; font-size: clamp(1.25rem, 3vw, 1.7rem); }
+    .tagline { margin: 2px 0 0; color: var(--muted); font-size: .93rem; }
 
     .badge {
       border: 1px solid var(--border);
-      background: rgba(255,255,255,.8);
+      background: rgba(255,255,255,.84);
+      color: var(--primary-dark);
       padding: 9px 13px;
       border-radius: 999px;
-      font-size: .84rem;
-      color: var(--primary-dark);
-      font-weight: 700;
+      font-weight: 800;
+      font-size: .82rem;
     }
 
     .layout {
       display: grid;
-      grid-template-columns: 290px 1fr;
+      grid-template-columns: 315px 1fr;
       gap: 22px;
       align-items: start;
     }
 
     .panel {
       background: var(--panel);
-      border: 1px solid rgba(221,216,246,.9);
+      border: 1px solid rgba(222,217,244,.95);
       border-radius: 24px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(12px);
@@ -108,15 +103,12 @@
       top: 18px;
     }
 
-    aside h2 {
-      margin: 0 0 16px;
-      font-size: 1rem;
-    }
+    aside h2 { margin: 0 0 14px; font-size: 1rem; }
 
     label {
       display: block;
-      font-size: .84rem;
-      font-weight: 750;
+      font-size: .82rem;
+      font-weight: 800;
       margin: 14px 0 7px;
     }
 
@@ -124,107 +116,143 @@
       width: 100%;
       border: 1px solid var(--border);
       border-radius: 14px;
-      color: var(--text);
       background: #fff;
+      color: var(--text);
       outline: none;
       transition: .2s ease;
     }
 
-    select {
-      padding: 11px 12px;
-    }
-
-    textarea {
-      min-height: 116px;
-      resize: vertical;
-      padding: 14px;
-      line-height: 1.5;
-    }
+    select { padding: 11px 12px; }
+    textarea { padding: 14px; line-height: 1.5; resize: vertical; min-height: 104px; }
 
     select:focus, textarea:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 4px rgba(109,93,252,.12);
     }
 
-    .rule-card {
-      margin-top: 18px;
+    .rule-card, .coach-card {
+      margin-top: 16px;
       padding: 15px;
       border-radius: 16px;
-      background: #f2efff;
-      border: 1px solid #ddd6ff;
-      font-size: .9rem;
+      font-size: .89rem;
       line-height: 1.45;
     }
 
-    .rule-card strong { color: var(--primary-dark); }
+    .rule-card {
+      background: var(--primary-soft);
+      border: 1px solid #ddd6ff;
+    }
 
-    .stats {
+    .coach-card {
+      background: #fffaf0;
+      border: 1px solid #f3dfb6;
+    }
+
+    .rule-card strong { color: var(--primary-dark); }
+    .coach-card strong { color: #9a671c; }
+
+    .progress-wrap { margin-top: 18px; }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: .78rem;
+      font-weight: 750;
+      margin-bottom: 7px;
+    }
+
+    .progress {
+      height: 11px;
+      border-radius: 999px;
+      background: #ebe7fb;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), #9a70ff);
+      transition: width .35s ease;
+    }
+
+    .objectives {
+      margin-top: 16px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: white;
+    }
+
+    .objectives h3 { margin: 0 0 10px; font-size: .86rem; }
+    .objective {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      margin: 8px 0;
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.35;
+    }
+    .objective.done { color: var(--success); }
+    .objective.active { color: var(--primary-dark); font-weight: 800; }
+    .dot { width: 18px; flex: 0 0 18px; text-align: center; }
+
+    .side-buttons {
       display: grid;
-      grid-template-columns: 1fr 1fr;
       gap: 9px;
       margin-top: 16px;
     }
 
-    .stat {
-      padding: 12px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: white;
-    }
-
-    .stat b {
-      display: block;
-      font-size: 1.25rem;
-    }
-
-    .stat span {
-      color: var(--muted);
-      font-size: .75rem;
-    }
-
     main {
-      min-height: 690px;
+      min-height: 740px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
     .hero {
-      padding: 30px 30px 22px;
+      padding: 28px 30px 22px;
       border-bottom: 1px solid var(--border);
-      background: linear-gradient(120deg, rgba(109,93,252,.09), rgba(255,184,77,.1));
+      background: linear-gradient(120deg, rgba(109,93,252,.09), rgba(255,184,77,.11));
     }
 
     .hero h2 {
       margin: 0;
-      font-size: clamp(1.5rem, 4vw, 2.35rem);
+      font-size: clamp(1.55rem, 4vw, 2.4rem);
       line-height: 1.08;
-      max-width: 720px;
     }
 
     .hero p {
-      margin: 12px 0 0;
+      margin: 11px 0 0;
       color: var(--muted);
-      max-width: 720px;
+      max-width: 760px;
       line-height: 1.55;
+    }
+
+    .suggestions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 15px;
     }
 
     .chat {
       flex: 1;
-      padding: 24px 30px 10px;
+      min-height: 430px;
+      max-height: 500px;
       overflow-y: auto;
-      max-height: 470px;
-      min-height: 400px;
+      padding: 24px 30px 12px;
     }
 
     .message {
-      max-width: 82%;
+      max-width: 84%;
       border-radius: 18px;
       padding: 13px 16px;
       margin-bottom: 14px;
       line-height: 1.5;
-      animation: rise .22s ease;
       white-space: pre-wrap;
+      animation: rise .22s ease;
     }
 
     @keyframes rise {
@@ -233,9 +261,19 @@
     }
 
     .assistant {
-      background: #f0edff;
+      background: var(--primary-soft);
       border: 1px solid #ded8ff;
       border-bottom-left-radius: 6px;
+    }
+
+    .assistant.feedback {
+      background: #f2fbf7;
+      border-color: #c8eadc;
+    }
+
+    .assistant.nudge {
+      background: #fff8eb;
+      border-color: #f1ddb8;
     }
 
     .user {
@@ -246,15 +284,21 @@
     }
 
     .composer {
-      padding: 20px 30px 28px;
+      padding: 19px 30px 27px;
       border-top: 1px solid var(--border);
-      background: rgba(255,255,255,.65);
+      background: rgba(255,255,255,.72);
+    }
+
+    .composer-hint {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: .8rem;
     }
 
     .button-row {
       display: flex;
-      gap: 10px;
-      margin-top: 11px;
+      gap: 9px;
+      margin-top: 10px;
       flex-wrap: wrap;
     }
 
@@ -264,7 +308,7 @@
       border-radius: 13px;
       padding: 11px 16px;
       font-weight: 800;
-      transition: transform .15s ease, opacity .15s ease, box-shadow .15s ease;
+      transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
     }
 
     button:hover { transform: translateY(-1px); }
@@ -282,19 +326,16 @@
       border: 1px solid var(--border);
     }
 
-    .danger {
-      margin-top: 12px;
-      width: 100%;
-      background: #fff;
-      color: #8c4764;
-      border: 1px solid #f0cddd;
+    .ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px dashed var(--border);
     }
 
-    .suggestions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 14px;
+    .danger {
+      background: #fff;
+      color: #984863;
+      border: 1px solid #efcddd;
     }
 
     .chip {
@@ -304,23 +345,21 @@
       background: white;
       color: var(--muted);
       font-size: .8rem;
-      font-weight: 700;
     }
 
     .footer-note {
-      color: var(--muted);
       text-align: center;
-      font-size: .78rem;
-      padding-top: 18px;
+      color: var(--muted);
+      font-size: .77rem;
+      padding-top: 17px;
     }
 
-    @media (max-width: 780px) {
+    @media (max-width: 820px) {
       .layout { grid-template-columns: 1fr; }
       aside { position: static; }
-      header { align-items: flex-start; }
       .badge { display: none; }
       .chat { max-height: none; }
-      .message { max-width: 94%; }
+      .message { max-width: 95%; }
       .hero, .chat, .composer { padding-left: 20px; padding-right: 20px; }
     }
   </style>
@@ -331,11 +370,11 @@
       <div class="brand">
         <div class="logo">?</div>
         <div>
-          <h1>QuestionQuest</h1>
-          <p class="tagline">Homework help that makes you think</p>
+          <h1>QuestionQuest Tutor</h1>
+          <p class="tagline">One useful question at a time</p>
         </div>
       </div>
-      <div class="badge">Socratic Mode: Always On</div>
+      <div class="badge">Adaptive Socratic Tutor</div>
     </header>
 
     <div class="layout">
@@ -353,58 +392,72 @@
           <option value="general">General</option>
         </select>
 
-        <label for="level">Question style</label>
+        <label for="level">Coaching style</label>
         <select id="level">
-          <option value="gentle">Gentle guidance</option>
-          <option value="standard" selected>Balanced guidance</option>
+          <option value="gentle">More support</option>
+          <option value="standard" selected>Balanced</option>
           <option value="challenge">Challenge me</option>
         </select>
 
         <div class="rule-card">
-          <strong>The one rule:</strong><br>
-          QuestionQuest never gives a direct answer. Every response must help you move forward by asking a question.
+          <strong>Question-only rule:</strong><br>
+          The tutor may confirm effort or correct a misconception, but every turn ends with a question that moves the work forward.
         </div>
 
-        <div class="stats">
-          <div class="stat">
-            <b id="questionCount">0</b>
-            <span>questions asked</span>
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span>Understanding</span>
+            <span id="progressText">0%</span>
           </div>
-          <div class="stat">
-            <b id="streakCount">0</b>
-            <span>step streak</span>
+          <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+
+        <div class="objectives">
+          <h3>Current learning path</h3>
+          <div id="objectivesList">
+            <div class="objective active"><span class="dot">◉</span><span>Share a homework problem</span></div>
           </div>
         </div>
 
-        <button class="danger" id="clearBtn">Clear conversation</button>
+        <div class="coach-card">
+          <strong>Stuck?</strong><br>
+          Use “Give me a hint” for a smaller clue. The tutor still will not reveal the final answer.
+        </div>
+
+        <div class="side-buttons">
+          <button class="secondary" id="hintBtn">Give me a hint</button>
+          <button class="ghost" id="restartBtn">Restart this problem</button>
+          <button class="danger" id="clearBtn">Clear conversation</button>
+        </div>
       </aside>
 
       <main class="panel">
         <section class="hero">
           <h2>What are you working on?</h2>
-          <p>Share a homework problem, draft idea, or confusing concept, and the app will guide you with questions instead of doing the work for you.</p>
+          <p>QuestionQuest now remembers the problem, evaluates each response, and asks the next question in the actual reasoning path.</p>
           <div class="suggestions">
-            <button class="chip" data-example="Solve 3x + 7 = 22">Math equation</button>
-            <button class="chip" data-example="Why do seasons change?">Science concept</button>
-            <button class="chip" data-example="Help me analyze the theme in The Great Gatsby">Literary analysis</button>
+            <button class="chip" data-example="Solve 3x + 7 = 22">Solve 3x + 7 = 22</button>
+            <button class="chip" data-example="Why do seasons change?">Why do seasons change?</button>
+            <button class="chip" data-example="Help me write a thesis about the theme of ambition in Macbeth">Build a thesis</button>
           </div>
         </section>
 
         <section class="chat" id="chat" aria-live="polite">
-          <div class="message assistant">What homework question would you like to explore?</div>
+          <div class="message assistant">What homework problem would you like to work through?</div>
         </section>
 
         <section class="composer">
-          <textarea id="input" placeholder="Type your homework question here..." aria-label="Homework question"></textarea>
+          <p class="composer-hint" id="composerHint">Start by entering the full homework question.</p>
+          <textarea id="input" placeholder="Type your homework question or your answer to the tutor..." aria-label="Homework question or answer"></textarea>
           <div class="button-row">
-            <button class="primary" id="askBtn">Ask QuestionQuest</button>
-            <button class="secondary" id="nextBtn">Ask another guiding question</button>
+            <button class="primary" id="sendBtn">Start tutoring</button>
+            <button class="secondary" id="repeatBtn">Rephrase the question</button>
           </div>
         </section>
       </main>
     </div>
 
-    <div class="footer-note">Designed to support learning, not replace it.</div>
+    <div class="footer-note">The tutor guides the reasoning process without completing the assignment for the student.</div>
   </div>
 
   <script>
@@ -412,285 +465,627 @@
     const input = document.getElementById("input");
     const subjectSelect = document.getElementById("subject");
     const levelSelect = document.getElementById("level");
-    const questionCountEl = document.getElementById("questionCount");
-    const streakCountEl = document.getElementById("streakCount");
+    const sendBtn = document.getElementById("sendBtn");
+    const composerHint = document.getElementById("composerHint");
+    const progressFill = document.getElementById("progressFill");
+    const progressText = document.getElementById("progressText");
+    const objectivesList = document.getElementById("objectivesList");
 
-    let lastUserText = "";
-    let questionCount = Number(localStorage.getItem("qq_questionCount") || 0);
-    let streakCount = Number(localStorage.getItem("qq_streakCount") || 0);
-    let step = 0;
+    const state = {
+      active: false,
+      originalProblem: "",
+      subject: "general",
+      skill: "general",
+      stage: 0,
+      attempts: 0,
+      lastQuestion: "",
+      data: {},
+      objectives: []
+    };
 
-    updateStats();
+    const normalize = value => String(value || "")
+      .toLowerCase()
+      .replace(/[^\w.\-\/\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
 
-    function updateStats() {
-      questionCountEl.textContent = questionCount;
-      streakCountEl.textContent = streakCount;
-      localStorage.setItem("qq_questionCount", questionCount);
-      localStorage.setItem("qq_streakCount", streakCount);
-    }
-
-    function addMessage(text, role) {
+    function addMessage(text, role, variant = "") {
       const el = document.createElement("div");
-      el.className = `message ${role}`;
+      el.className = `message ${role} ${variant}`.trim();
       el.textContent = text;
       chat.appendChild(el);
       chat.scrollTop = chat.scrollHeight;
     }
 
-    function detectSubject(text) {
-      const t = text.toLowerCase();
-      if (/[0-9][x²^+\-*/=]|equation|fraction|percent|calculate|geometry|algebra|mean|median|probability/.test(t)) return "math";
-      if (/cell|atom|force|energy|ecosystem|planet|chemical|biology|physics|science|experiment|weather|season/.test(t)) return "science";
-      if (/war|president|revolution|history|century|empire|government|civilization|historical/.test(t)) return "history";
-      if (/essay|theme|character|novel|poem|grammar|thesis|paragraph|author|writing|symbolism/.test(t)) return "english";
-      if (/business|inventory|supply chain|marketing|finance|roi|strategy|company|customer/.test(t)) return "business";
-      return "general";
-    }
-
-    function ensureQuestion(text) {
-      let cleaned = text.trim().replace(/[.!]+$/g, "");
+    function endWithQuestion(text) {
+      const cleaned = text.trim().replace(/[.!]+$/g, "");
       return cleaned.endsWith("?") ? cleaned : cleaned + "?";
     }
 
-    function extractNumbers(text) {
-      return text.match(/-?\d+(\.\d+)?/g) || [];
+    function detectSubject(text) {
+      const t = normalize(text);
+      if (/equation|solve|algebra|fraction|percent|geometry|calculate|mean|median|probability|[0-9]\s*[x-z]|[x-z]\s*[+\-*/=]/.test(t)) return "math";
+      if (/cell|atom|force|energy|ecosystem|planet|chemical|biology|physics|experiment|weather|season|gravity/.test(t)) return "science";
+      if (/war|president|revolution|history|century|empire|government|civilization|amendment/.test(t)) return "history";
+      if (/essay|theme|character|novel|poem|grammar|thesis|paragraph|author|writing|symbolism|macbeth/.test(t)) return "english";
+      if (/business|inventory|supply chain|marketing|finance|roi|strategy|company|customer|forecast/.test(t)) return "business";
+      return "general";
     }
 
-    function mathQuestion(text, level, currentStep) {
-      const nums = extractNumbers(text);
-      const hasEquation = text.includes("=");
-      const sets = {
-        gentle: [
-          hasEquation ? "What operation could undo the number being added or subtracted first?" : "What information is the problem giving you?",
-          "Which quantity are you trying to find?",
-          nums.length >= 2 ? `How might the numbers ${nums.slice(0,3).join(", ")} be related?` : "Could you represent the problem with numbers, a table, or an equation?",
-          "What is one small calculation you can confidently do first?",
-          "How could you check whether your result makes sense?"
-        ],
-        standard: [
-          hasEquation ? "What inverse operation would isolate the variable one step at a time?" : "What mathematical relationship does the problem describe?",
-          "Which values are known, and which value is unknown?",
-          "What formula, rule, or model seems most relevant here?",
-          "What would the next valid step be, and why?",
-          "How can you verify the result using substitution or estimation?"
-        ],
-        challenge: [
-          "What assumptions are hidden in the way this problem is written?",
-          "Can you solve it using a different representation or method?",
-          "Which step would be easiest to justify to someone who disagrees?",
-          "What common mistake might produce a believable but incorrect result?",
-          "How would the answer change if one given value changed?"
-        ]
+    function parseLinearEquation(text) {
+      const compact = text.toLowerCase().replace(/\s+/g, "");
+      const match = compact.match(/(?:solve)?([+-]?\d*\.?\d*)x([+-]\d*\.?\d+)?=([+-]?\d*\.?\d+)/);
+      if (!match) return null;
+
+      let aText = match[1];
+      let a = aText === "" || aText === "+" ? 1 : aText === "-" ? -1 : Number(aText);
+      let b = match[2] ? Number(match[2]) : 0;
+      let c = Number(match[3]);
+
+      if (![a,b,c].every(Number.isFinite) || a === 0) return null;
+      return {
+        a, b, c,
+        afterUndo: c - b,
+        solution: (c - b) / a
       };
-      return sets[level][currentStep % sets[level].length];
     }
 
-    function scienceQuestion(text, level, currentStep) {
-      const sets = {
-        gentle: [
-          "What objects, organisms, or forces are involved?",
-          "What change or outcome are you trying to explain?",
-          "What do you already know about the process?",
-          "What cause-and-effect relationship might connect the details?",
-          "What observation or experiment could test your idea?"
-        ],
-        standard: [
-          "Which scientific principle appears most relevant to this situation?",
-          "What is the independent variable, and what outcome would you observe?",
-          "What mechanism could explain why this happens?",
-          "What evidence would support or weaken that explanation?",
-          "How could you distinguish correlation from causation here?"
-        ],
-        challenge: [
-          "What alternative explanation could fit the same observations?",
-          "Which assumption would matter most if it were wrong?",
-          "What prediction does your explanation make?",
-          "What result would falsify your explanation?",
-          "At what scale does this explanation stop working well?"
-        ]
-      };
-      return sets[level][currentStep % sets[level].length];
+    function classifySkill(problem, subject) {
+      if (subject === "math" && parseLinearEquation(problem)) return "linear-equation";
+      if (subject === "science" && /season/.test(normalize(problem))) return "seasons";
+      if (subject === "english" && /thesis|theme|macbeth|ambition/.test(normalize(problem))) return "thesis";
+      return subject;
     }
 
-    function historyQuestion(text, level, currentStep) {
-      const sets = {
-        gentle: [
-          "Who were the main people or groups involved?",
-          "What happened before this event?",
-          "What problem or conflict were people responding to?",
-          "What changed because of the event?",
-          "Whose perspective might tell the story differently?"
-        ],
-        standard: [
-          "Which political, economic, or social cause seems most important?",
-          "What primary evidence could support your interpretation?",
-          "How did the event affect different groups in different ways?",
-          "Was this event more of a turning point or a continuation?",
-          "What consequence lasted the longest?"
-        ],
-        challenge: [
-          "Which popular interpretation deserves to be questioned?",
-          "How might the outcome have changed under a different condition?",
-          "Which source would be most vulnerable to bias?",
-          "What is the strongest counterargument to your interpretation?",
-          "How would historians from two different schools of thought disagree?"
-        ]
-      };
-      return sets[level][currentStep % sets[level].length];
+    function setObjectives(items) {
+      state.objectives = items.map((label, i) => ({ label, status: i === 0 ? "active" : "pending" }));
+      renderObjectives();
     }
 
-    function englishQuestion(text, level, currentStep) {
-      const sets = {
-        gentle: [
-          "What is the text mainly trying to communicate?",
-          "Which character, image, or detail stands out most?",
-          "What feeling or idea does that detail create?",
-          "Which quotation could support your interpretation?",
-          "How could you explain why that evidence matters?"
-        ],
-        standard: [
-          "What claim do you want your reader to accept?",
-          "Which specific evidence best supports that claim?",
-          "What pattern, contrast, or symbol appears in the text?",
-          "How does the author's choice shape the reader's understanding?",
-          "What counterinterpretation should your analysis address?"
-        ],
-        challenge: [
-          "What tension or contradiction makes the text interesting?",
-          "How might a different critical lens change your interpretation?",
-          "Which word choice carries more meaning than it first appears to?",
-          "Where is your argument most vulnerable?",
-          "What deeper implication follows from your evidence?"
-        ]
-      };
-      return sets[level][currentStep % sets[level].length];
+    function completeObjective(index) {
+      state.objectives.forEach((item, i) => {
+        item.status = i < index ? "done" : i === index ? "active" : "pending";
+      });
+      renderObjectives();
     }
 
-    function businessQuestion(text, level, currentStep) {
-      const sets = {
-        gentle: [
-          "What business problem is the organization trying to solve?",
-          "Who is affected by the decision?",
-          "What information is already available?",
-          "Which outcome would count as success?",
-          "What tradeoff must the decision maker manage?"
-        ],
-        standard: [
-          "Which metric best represents the real business objective?",
-          "What baseline should the proposed solution be compared against?",
-          "Which assumption has the greatest effect on the recommendation?",
-          "What cost, risk, or operational constraint could change the decision?",
-          "How would you test the recommendation on a small scale?"
-        ],
-        challenge: [
-          "What incentive might cause the chosen metric to be gamed?",
-          "Which stakeholder would disagree with the recommendation, and why?",
-          "What second-order consequence could appear after implementation?",
-          "What evidence would make you reverse your decision?",
-          "How could a competitor respond?"
-        ]
-      };
-      return sets[level][currentStep % sets[level].length];
+    function finishObjectives() {
+      state.objectives.forEach(item => item.status = "done");
+      renderObjectives();
     }
 
-    function generalQuestion(text, level, currentStep) {
-      const sets = {
-        gentle: [
-          "What part of the question feels most confusing?",
-          "What do you already know about the topic?",
-          "What is the question asking you to produce?",
-          "Can you break the task into one smaller step?",
-          "What example could help you test your understanding?"
-        ],
-        standard: [
-          "What is the central problem in your own words?",
-          "Which details are essential, and which are distractions?",
-          "What rule, concept, or source could guide your next step?",
-          "What tentative answer do you currently believe?",
-          "What evidence would help you check that idea?"
-        ],
-        challenge: [
-          "What assumption are you making without noticing?",
-          "What is the strongest alternative explanation?",
-          "How could you approach the problem from the opposite direction?",
-          "What would an expert ask before answering?",
-          "How would you defend your reasoning under criticism?"
-        ]
-      };
-      return sets[level][currentStep % sets[level].length];
+    function renderObjectives() {
+      objectivesList.innerHTML = "";
+      state.objectives.forEach(item => {
+        const row = document.createElement("div");
+        row.className = `objective ${item.status === "done" ? "done" : item.status === "active" ? "active" : ""}`;
+        const icon = item.status === "done" ? "✓" : item.status === "active" ? "◉" : "○";
+        row.innerHTML = `<span class="dot">${icon}</span><span>${item.label}</span>`;
+        objectivesList.appendChild(row);
+      });
+      updateProgress();
     }
 
-    function makeGuidingQuestion(text) {
-      const selected = subjectSelect.value;
-      const subject = selected === "auto" ? detectSubject(text) : selected;
-      const level = levelSelect.value;
-      const currentStep = step++;
-
-      const generators = {
-        math: mathQuestion,
-        science: scienceQuestion,
-        history: historyQuestion,
-        english: englishQuestion,
-        business: businessQuestion,
-        general: generalQuestion
-      };
-
-      return ensureQuestion(generators[subject](text, level, currentStep));
+    function updateProgress() {
+      if (!state.objectives.length) return;
+      const done = state.objectives.filter(x => x.status === "done").length;
+      const activeBonus = state.objectives.some(x => x.status === "active") ? .35 : 0;
+      const pct = Math.min(100, Math.round(((done + activeBonus) / state.objectives.length) * 100));
+      progressFill.style.width = pct + "%";
+      progressText.textContent = pct + "%";
     }
 
-    function submitQuestion() {
-      const text = input.value.trim();
-      if (!text) {
-        addMessage("What question would you like help thinking through?", "assistant");
+    function configureLearningPath() {
+      if (state.skill === "linear-equation") {
+        setObjectives([
+          "Identify the operation attached to the variable term",
+          "Undo the addition or subtraction",
+          "Simplify both sides",
+          "Isolate the variable",
+          "Check the result"
+        ]);
+      } else if (state.skill === "seasons") {
+        setObjectives([
+          "Identify what changes during the year",
+          "Separate tilt from distance",
+          "Explain sunlight angle and day length",
+          "Form a complete explanation",
+          "Test the explanation"
+        ]);
+      } else if (state.skill === "thesis") {
+        setObjectives([
+          "Choose a clear interpretation",
+          "Identify supporting evidence",
+          "Explain the significance",
+          "Combine ideas into a thesis",
+          "Stress-test the thesis"
+        ]);
+      } else {
+        setObjectives([
+          "Restate the task",
+          "Identify relevant information",
+          "Choose a useful concept or method",
+          "Apply the method",
+          "Check the reasoning"
+        ]);
+      }
+    }
+
+    function ask(text, variant = "") {
+      state.lastQuestion = endWithQuestion(text);
+      addMessage(state.lastQuestion, "assistant", variant);
+    }
+
+    function startProblem(problem) {
+      state.active = true;
+      state.originalProblem = problem;
+      state.subject = subjectSelect.value === "auto" ? detectSubject(problem) : subjectSelect.value;
+      state.skill = classifySkill(problem, state.subject);
+      state.stage = 0;
+      state.attempts = 0;
+      state.data = state.skill === "linear-equation" ? parseLinearEquation(problem) : {};
+      configureLearningPath();
+      sendBtn.textContent = "Submit my thinking";
+      composerHint.textContent = "Answer the tutor’s current question. A short phrase is enough.";
+      ask(firstQuestion());
+    }
+
+    function firstQuestion() {
+      if (state.skill === "linear-equation") {
+        const { a, b } = state.data;
+        if (b !== 0) {
+          return `In the equation, what operation involving ${Math.abs(b)} is being applied to the ${a === 1 ? "" : a}x term`;
+        }
+        return `What operation is being applied to x in the term ${a}x`;
+      }
+      if (state.skill === "seasons") {
+        return "What feature of Earth changes the angle and duration of sunlight received by each hemisphere during the year";
+      }
+      if (state.skill === "thesis") {
+        return "What specific message about ambition do you think the text communicates";
+      }
+      return "In your own words, what is the assignment asking you to determine, explain, or create";
+    }
+
+    function isOneOf(answer, terms) {
+      const a = normalize(answer);
+      return terms.some(term => a.includes(normalize(term)));
+    }
+
+    function numberFrom(answer) {
+      const m = normalize(answer).match(/-?\d+(\.\d+)?/);
+      return m ? Number(m[0]) : null;
+    }
+
+    function approxEqual(a, b) {
+      return Number.isFinite(a) && Number.isFinite(b) && Math.abs(a - b) < 0.001;
+    }
+
+    function handleLinear(answer) {
+      const d = state.data;
+      const a = normalize(answer);
+      const bSign = d.b > 0 ? "addition" : "subtraction";
+      const inverse = d.b > 0 ? "subtract" : "add";
+
+      if (state.stage === 0) {
+        const correct = d.b === 0
+          ? isOneOf(a, ["multiply", "multiplication", "times"])
+          : d.b > 0
+            ? isOneOf(a, ["add", "addition", "plus"])
+            : isOneOf(a, ["subtract", "subtraction", "minus"]);
+
+        if (correct) {
+          state.stage = 1;
+          state.attempts = 0;
+          completeObjective(1);
+          ask(`Right—the variable term has ${bSign} attached to it. What inverse operation would undo that ${bSign}`, "feedback");
+        } else {
+          state.attempts++;
+          ask(state.attempts > 1
+            ? `Look only at the sign immediately before ${Math.abs(d.b)}. Does that sign represent addition or subtraction`
+            : `Which symbol connects ${d.a === 1 ? "x" : d.a + "x"} and ${Math.abs(d.b)}, and what operation does that symbol mean`, "nudge");
+        }
         return;
       }
 
-      lastUserText = text;
+      if (state.stage === 1) {
+        if (isOneOf(a, [inverse, inverse + "ing"])) {
+          state.stage = 2;
+          state.attempts = 0;
+          completeObjective(2);
+          ask(`What must you do to both sides of the equation to keep it balanced`, "feedback");
+        } else {
+          state.attempts++;
+          ask(`What operation reverses ${bSign}`);
+        }
+        return;
+      }
+
+      if (state.stage === 2) {
+        const mentionsBoth = isOneOf(a, ["both sides", "each side"]);
+        const mentionsInverse = isOneOf(a, [inverse]);
+        if (mentionsBoth && mentionsInverse) {
+          state.stage = 3;
+          state.attempts = 0;
+          completeObjective(3);
+          ask(`After you ${inverse} ${Math.abs(d.b)} on both sides, what does the right side become`, "feedback");
+        } else {
+          state.attempts++;
+          ask(`Would changing only one side preserve equality, or must the inverse operation be applied somewhere else too`, "nudge");
+        }
+        return;
+      }
+
+      if (state.stage === 3) {
+        const n = numberFrom(answer);
+        if (approxEqual(n, d.afterUndo)) {
+          state.stage = 4;
+          state.attempts = 0;
+          completeObjective(4);
+          ask(`Now the equation is ${d.a}x = ${d.afterUndo}. What operation is currently connecting ${d.a} and x`, "feedback");
+        } else {
+          state.attempts++;
+          ask(`What is ${d.c} ${d.b > 0 ? "minus" : "plus"} ${Math.abs(d.b)}`, "nudge");
+        }
+        return;
+      }
+
+      if (state.stage === 4) {
+        if (isOneOf(a, ["multiply", "multiplication", "times"])) {
+          state.stage = 5;
+          state.attempts = 0;
+          ask(`What inverse operation would isolate x without calculating the final value yet`, "feedback");
+        } else {
+          state.attempts++;
+          ask(`Does ${d.a}x mean ${d.a} plus x, or ${d.a} times x`, "nudge");
+        }
+        return;
+      }
+
+      if (state.stage === 5) {
+        if (isOneOf(a, ["divide", "division"])) {
+          state.stage = 6;
+          state.attempts = 0;
+          completeObjective(4);
+          ask(`What expression should you evaluate to determine x`, "feedback");
+        } else {
+          state.attempts++;
+          ask(`What operation reverses multiplication by ${d.a}`, "nudge");
+        }
+        return;
+      }
+
+      if (state.stage === 6) {
+        const n = numberFrom(answer);
+        if (approxEqual(n, d.solution)) {
+          state.stage = 7;
+          state.attempts = 0;
+          completeObjective(4);
+          ask(`How could you substitute your value back into the original equation to check whether both sides equal ${d.c}`, "feedback");
+        } else {
+          state.attempts++;
+          ask(`What is ${d.afterUndo} divided by ${d.a}`, "nudge");
+        }
+        return;
+      }
+
+      if (state.stage === 7) {
+        const includesSolution = normalize(answer).includes(String(d.solution));
+        const mentionsSub = isOneOf(a, ["substitute", "plug", "replace"]);
+        if (includesSolution || mentionsSub) {
+          finishObjectives();
+          state.stage = 8;
+          ask(`When you carry out that substitution, do both sides of the original equation have the same value`, "feedback");
+        } else {
+          ask(`What value would replace x in the original left-hand expression ${d.a}x ${d.b >= 0 ? "+" : "-"} ${Math.abs(d.b)}`, "nudge");
+        }
+        return;
+      }
+
+      ask(`What part of your reasoning would you explain first to another student`);
+    }
+
+    function handleSeasons(answer) {
+      const a = normalize(answer);
+
+      if (state.stage === 0) {
+        if (isOneOf(a, ["tilt", "axis", "axial"])) {
+          state.stage = 1; completeObjective(1);
+          ask("How does Earth’s axial tilt change the angle at which sunlight reaches a hemisphere during different parts of its orbit", "feedback");
+        } else {
+          ask("Is the key feature Earth’s changing distance from the Sun, or the tilt of its axis", "nudge");
+        }
+        return;
+      }
+
+      if (state.stage === 1) {
+        if (isOneOf(a, ["direct", "angle", "indirect", "concentrated", "spread"])) {
+          state.stage = 2; completeObjective(2);
+          ask("When a hemisphere is tilted toward the Sun, what happens to both the sunlight angle and the length of daylight", "feedback");
+        } else {
+          ask("Would sunlight arriving more directly spread its energy over a larger area or a smaller area", "nudge");
+        }
+        return;
+      }
+
+      if (state.stage === 2) {
+        if (isOneOf(a, ["longer", "more direct", "more daylight", "warmer"])) {
+          state.stage = 3; completeObjective(3);
+          ask("How would you combine axial tilt, direct sunlight, and longer daylight into one cause-and-effect explanation", "feedback");
+        } else {
+          ask("Does tilting toward the Sun produce shorter days or longer days in that hemisphere", "nudge");
+        }
+        return;
+      }
+
+      if (state.stage === 3) {
+        if (isOneOf(a, ["tilt", "sunlight"]) && isOneOf(a, ["day", "daylight", "angle", "direct"])) {
+          state.stage = 4; completeObjective(4);
+          ask("What observation about opposite seasons in the Northern and Southern Hemispheres supports your explanation", "feedback");
+        } else {
+          ask("Can your explanation use the structure: because Earth is tilted, one hemisphere receives ___ sunlight for ___ hours, causing ___");
+        }
+        return;
+      }
+
+      if (state.stage === 4) {
+        if (isOneOf(a, ["opposite", "winter", "summer", "hemisphere"])) {
+          finishObjectives(); state.stage = 5;
+          ask("How does that evidence rule out the idea that seasons are mainly caused by Earth being closer to the Sun", "feedback");
+        } else {
+          ask("When it is summer in one hemisphere, what season is usually occurring in the other hemisphere", "nudge");
+        }
+        return;
+      }
+
+      ask("What misconception about seasons could you now correct using your explanation");
+    }
+
+    function handleThesis(answer) {
+      const a = normalize(answer);
+
+      if (state.stage === 0) {
+        if (a.length > 12) {
+          state.data.claim = answer.trim();
+          state.stage = 1; completeObjective(1);
+          ask("Which specific event, character decision, or quotation best supports that interpretation", "feedback");
+        } else {
+          ask("Could you complete this sentence: the text suggests that ambition becomes dangerous when ___");
+        }
+        return;
+      }
+
+      if (state.stage === 1) {
+        if (a.length > 15) {
+          state.data.evidence = answer.trim();
+          state.stage = 2; completeObjective(2);
+          ask("What does that evidence reveal about the consequences or nature of ambition", "feedback");
+        } else {
+          ask("What concrete moment in the text could a reader point to as proof");
+        }
+        return;
+      }
+
+      if (state.stage === 2) {
+        if (a.length > 15) {
+          state.data.significance = answer.trim();
+          state.stage = 3; completeObjective(3);
+          ask("How could you combine your interpretation, evidence direction, and significance into one arguable sentence", "feedback");
+        } else {
+          ask("Why does the evidence matter beyond simply describing what happened");
+        }
+        return;
+      }
+
+      if (state.stage === 3) {
+        const hasClaim = a.length > 30;
+        if (hasClaim) {
+          state.data.thesis = answer.trim();
+          state.stage = 4; completeObjective(4);
+          ask("Could a reasonable reader disagree with this thesis, and what part makes it arguable rather than purely factual", "feedback");
+        } else {
+          ask("Can the sentence name the text, make a specific claim about ambition, and explain why that claim matters");
+        }
+        return;
+      }
+
+      if (state.stage === 4) {
+        if (a.length > 10) {
+          finishObjectives(); state.stage = 5;
+          ask("What is the strongest piece of evidence you would place in the first body paragraph to defend the thesis", "feedback");
+        } else {
+          ask("What alternative interpretation might another reader offer");
+        }
+        return;
+      }
+
+      ask("Which sentence in your planned paragraph would connect the evidence back to the thesis");
+    }
+
+    function handleGeneral(answer) {
+      const a = normalize(answer);
+      if (state.stage === 0) {
+        if (a.length > 10) {
+          state.stage = 1; completeObjective(1);
+          ask("Which facts, instructions, or pieces of evidence from the prompt are necessary to complete that task", "feedback");
+        } else {
+          ask("What action word appears in the assignment, such as solve, compare, explain, analyze, or design");
+        }
+        return;
+      }
+      if (state.stage === 1) {
+        if (a.length > 10) {
+          state.stage = 2; completeObjective(2);
+          ask("Which concept, formula, framework, or source could help you use that information", "feedback");
+        } else {
+          ask("What information was directly provided, and what information still needs to be found");
+        }
+        return;
+      }
+      if (state.stage === 2) {
+        if (a.length > 5) {
+          state.stage = 3; completeObjective(3);
+          ask("What is the smallest concrete step you can take with that method right now", "feedback");
+        } else {
+          ask("What have you learned in this unit that resembles this problem");
+        }
+        return;
+      }
+      if (state.stage === 3) {
+        if (a.length > 5) {
+          state.stage = 4; completeObjective(4);
+          ask("What result did that step produce, and how does it move you closer to the task", "feedback");
+        } else {
+          ask("Could you write one equation, sentence, comparison, or example as a first step");
+        }
+        return;
+      }
+      if (state.stage === 4) {
+        if (a.length > 8) {
+          finishObjectives(); state.stage = 5;
+          ask("What check could reveal whether your reasoning is incomplete or mistaken", "feedback");
+        } else {
+          ask("Does your result directly answer the action word in the original prompt");
+        }
+        return;
+      }
+      ask("How would you explain your reasoning in a way another student could follow");
+    }
+
+    function handleAnswer(answer) {
+      if (state.skill === "linear-equation") return handleLinear(answer);
+      if (state.skill === "seasons") return handleSeasons(answer);
+      if (state.skill === "thesis") return handleThesis(answer);
+      return handleGeneral(answer);
+    }
+
+    function submit() {
+      const text = input.value.trim();
+      if (!text) {
+        ask(state.active ? "What is your best attempt at the current question" : "What homework problem would you like to work through");
+        return;
+      }
+
       addMessage(text, "user");
       input.value = "";
 
-      questionCount++;
-      streakCount++;
-      updateStats();
-
-      window.setTimeout(() => {
-        addMessage(makeGuidingQuestion(text), "assistant");
-      }, 250);
+      if (!state.active) {
+        startProblem(text);
+      } else {
+        handleAnswer(text);
+      }
     }
 
-    document.getElementById("askBtn").addEventListener("click", submitQuestion);
-
-    document.getElementById("nextBtn").addEventListener("click", () => {
-      if (!lastUserText) {
-        addMessage("What homework problem should we begin with?", "assistant");
+    function giveHint() {
+      if (!state.active) {
+        ask("What complete homework question should we begin with");
         return;
       }
-      streakCount++;
-      updateStats();
-      addMessage(makeGuidingQuestion(lastUserText), "assistant");
-    });
 
-    document.getElementById("clearBtn").addEventListener("click", () => {
-      chat.innerHTML = '<div class="message assistant">What homework question would you like to explore?</div>';
-      lastUserText = "";
-      step = 0;
-      streakCount = 0;
-      updateStats();
-    });
+      if (state.skill === "linear-equation") {
+        const d = state.data;
+        const hints = [
+          `Look at the sign directly before ${Math.abs(d.b)}.`,
+          `Inverse operations undo one another, such as addition and subtraction.`,
+          `An equation stays balanced only when the same operation is applied to both sides.`,
+          `Focus on calculating ${d.c} ${d.b > 0 ? "minus" : "plus"} ${Math.abs(d.b)}.`,
+          `${d.a}x means ${d.a} multiplied by x.`,
+          `Division reverses multiplication.`,
+          `Write the remaining right-side value over the coefficient of x.`,
+          `Replace x with your proposed value in the original equation.`
+        ];
+        ask(`${hints[Math.min(state.stage, hints.length - 1)]} What does that clue suggest you should try next`, "nudge");
+        return;
+      }
 
-    input.addEventListener("keydown", (event) => {
+      if (state.skill === "seasons") {
+        const hints = [
+          "Think about Earth’s axis rather than its distance from the Sun.",
+          "Compare direct sunlight with sunlight arriving at a shallow angle.",
+          "Think about both sunlight intensity and hours of daylight.",
+          "Build a because–therefore explanation.",
+          "Compare the two hemispheres at the same time of year."
+        ];
+        ask(`${hints[Math.min(state.stage, hints.length - 1)]} How could you use that clue`, "nudge");
+        return;
+      }
+
+      if (state.skill === "thesis") {
+        const hints = [
+          "A strong theme statement explains what the text says about a broad idea.",
+          "Use a concrete decision, consequence, or quotation.",
+          "Explain what the evidence reveals, not just what occurs.",
+          "A thesis should be specific, arguable, and supportable.",
+          "Imagine a reader offering a different interpretation."
+        ];
+        ask(`${hints[Math.min(state.stage, hints.length - 1)]} What could you add or revise`, "nudge");
+        return;
+      }
+
+      ask("Could you identify one keyword in the assignment that points toward the method you should use", "nudge");
+    }
+
+    function rephrase() {
+      if (!state.active || !state.lastQuestion) {
+        ask("What homework problem should we start with");
+        return;
+      }
+
+      const replacements = [
+        "How would you say the same idea in your own words",
+        "What smaller question must be answered before the current one",
+        "Which part of the current question can you answer with the most confidence"
+      ];
+
+      ask(replacements[state.attempts % replacements.length], "nudge");
+    }
+
+    function resetProblem(clearChat = false) {
+      state.active = false;
+      state.originalProblem = "";
+      state.subject = "general";
+      state.skill = "general";
+      state.stage = 0;
+      state.attempts = 0;
+      state.lastQuestion = "";
+      state.data = {};
+      state.objectives = [{ label: "Share a homework problem", status: "active" }];
+      renderObjectives();
+      sendBtn.textContent = "Start tutoring";
+      composerHint.textContent = "Start by entering the full homework question.";
+      progressFill.style.width = "0%";
+      progressText.textContent = "0%";
+      if (clearChat) chat.innerHTML = "";
+      ask("What homework problem would you like to work through");
+    }
+
+    sendBtn.addEventListener("click", submit);
+    document.getElementById("hintBtn").addEventListener("click", giveHint);
+    document.getElementById("repeatBtn").addEventListener("click", rephrase);
+    document.getElementById("restartBtn").addEventListener("click", () => {
+      const problem = state.originalProblem;
+      if (!problem) return resetProblem(false);
+      state.active = false;
+      startProblem(problem);
+    });
+    document.getElementById("clearBtn").addEventListener("click", () => resetProblem(true));
+
+    input.addEventListener("keydown", event => {
       if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
-        submitQuestion();
+        submit();
       }
     });
 
     document.querySelectorAll("[data-example]").forEach(button => {
       button.addEventListener("click", () => {
+        if (state.active) resetProblem(true);
         input.value = button.dataset.example;
         input.focus();
       });
     });
+
+    renderObjectives();
   </script>
 </body>
 </html>

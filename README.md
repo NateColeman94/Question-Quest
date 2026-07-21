@@ -1,28 +1,28 @@
- # QuestionQuest
+# QuestionQuest Tutor v2
 
-QuestionQuest is a lightweight Socratic homework helper that responds only with guiding questions.
+QuestionQuest Tutor is a static, GitHub Pages-ready Socratic homework helper.
 
-## Features
+## What changed in v2
 
-- Subject-aware question generation
-- Math, science, history, English, business, and general modes
-- Gentle, balanced, and challenge levels
-- Question and step-streak tracking with browser local storage
-- Responsive layout
-- No server, API key, or build process required
+- Each response is evaluated against the current learning step.
+- Questions follow a real reasoning path instead of rotating through generic prompts.
+- The tutor gives corrective questions when the student is mistaken.
+- A hint button provides smaller clues without revealing the final answer.
+- A progress bar and learning objectives show where the student is in the process.
+- Built-in adaptive tutoring paths currently include:
+  - One-variable linear equations such as `3x + 7 = 22`
+  - The scientific explanation for seasons
+  - Literary thesis development
+  - A general guided-learning workflow for other prompts
 
-## Run locally
+## Uploading the patch to GitHub
 
-Open `index.html` in a browser.
+1. Open your `Question-Quest` repository.
+2. Open the existing `index.html`.
+3. Click the pencil icon to edit it.
+4. Select all existing code and replace it with the new `index.html`.
+5. Commit the change directly to the `main` branch.
+6. Wait about one minute for GitHub Pages to update.
+7. Refresh your published site.
 
-## Publish with GitHub Pages
-
-1. Create a new GitHub repository.
-2. Upload `index.html`.
-3. Open **Settings → Pages**.
-4. Select the main branch and root folder.
-5. Save and open the published GitHub Pages link.
-
-## Important limitation
-
-This starter version uses local rule-based prompts rather than an external AI model. That keeps it free and secure for static hosting.
+No API key or server is required.
